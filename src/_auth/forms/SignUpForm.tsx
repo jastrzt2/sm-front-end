@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useToast } from "@/components/ui/use-toast"
+
 
 import {
   Form,
@@ -14,21 +16,22 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 import { useForm } from "react-hook-form"
-import { SingUpValidation } from "@/lib/validation"
+import { SignUpValidation as SignUpValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
 import { useState } from "react"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
 
 
 export const SignUpForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [usernameError, setUsernameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-
-
-  // Move the initialization of the 'form' variable inside the body of the 'SignUpForm' function.
-  const form = useForm<z.infer<typeof SingUpValidation>>({
-    resolver: zodResolver(SingUpValidation),
+  const { toast } = useToast()
+  const [ formMessage, setFormMessage] = useState('');  
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount();
+  const { mutateAsync: signInAccount, isPending: isSigningIn } = useSignInAccount();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const navigate = useNavigate();
+  const form = useForm<z.infer<typeof SignUpValidation>>({
+    resolver: zodResolver(SignUpValidation),
     defaultValues: {
       name: '',
       username: '',
@@ -37,47 +40,53 @@ export const SignUpForm = () => {
     },
   })
 
-  // Define a submit handler.
-  async function onSubmit(values: z.infer<typeof SingUpValidation>) {
-    setIsLoading(true);
-    setUsernameError(''); // Clear previous username error messages
-    setEmailError(''); // Clear previous email error messages
-    setErrorMessage(''); // Clear any previous general error messages
-  
-    try {
-      const response = await fetch('http://localhost:8080/api/v1/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('User created successfully', data);
-        // Navigate to login page or dashboard, e.g., using react-router-dom's useHistory hook
-      } else {
-        const data = await response.json();
-        if (data.errors) {
-          data.errors.forEach((error) => {
-            if (error.field === 'username') {
-              setUsernameError(error.message);
-            } else if (error.field === 'email') {
-              setEmailError(error.message);
-            }
-          });
-        } else {
-          setErrorMessage(data.message || 'Failed to create user');
-        }
-      }
-    } catch (error) {
-      console.error('An error occurred while creating the user', error);
-      setErrorMessage(error.toString());
-    } finally {
-      setIsLoading(false);
-    }
+
+async function onSubmit(values: z.infer<typeof SignUpValidation>) {
+  setFormMessage('');
+
+  const { success, data } = await createUserAccount(values);
+
+  if (success) {
+    console.log('User created successfully', data);
+  } else {
+    console.error('Failed to create user', data.message);
+    setFormMessage(data.message || 'Failed to create user.');
+    toast({
+      title: "Sign up failed. Please try again.",
+    })
+    return;
   }
+  
+  const token = await signInAccount({
+    email: values.email,
+    password: values.password,
+  });
+
+  if (!token) {
+    navigate('/sign-in');
+    return toast({  
+      title: "Sign in failed. Please try again.", 
+      duration: 5000,
+    });
+  }
+  console.log('User signed in successfully');
+
+  const isLoggedIn = await checkAuthUser(token);
+
+  console.log('Is logged in:', isLoggedIn);
+
+  if(isLoggedIn) {
+    form.reset();
+    navigate('/');
+  } else {
+    toast({
+      title: "Sign in failed. Please try again.",
+      duration: 5000,
+    });
+    navigate('/sign-in');
+  }
+}
+
   
   
 
@@ -142,22 +151,22 @@ export const SignUpForm = () => {
           )}
         />
         <Button type="submit" className="shad-button_primary">
-          {isLoading ? (
+          {isCreatingUser || isSigningIn || isUserLoading ? (
             <div className="flex-center gap-2">
               <Loader/>Loading...
             </div>
 
           ): "Sign Up" }
           </Button>
+          {formMessage && (
+            <p className="text-center mt-4 text-rose-600">{formMessage}</p>
+          )}
           <p className="text-small-red text-light-2 text-center mt-2">
             Already have an account?{" "}
             <Link to="/sign-in" className="text-primary-500 text-small-semibold ml-1">
-              Sign In
+              Sign in
             </Link>
           </p>
-          {errorMessage && (
-            <p className="text-red-500 text-center mt-4">{errorMessage}</p>
-          )}
       </form>
       </div>
     </Form>
