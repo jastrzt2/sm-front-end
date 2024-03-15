@@ -7,6 +7,7 @@ import PostStats from "./PostStats";
 const PostCard = ({ post }: IPost) => {
   const { user } = useUserContext();
 
+
   if (!post.userId) return;
 
   return (

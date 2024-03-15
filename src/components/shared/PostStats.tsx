@@ -9,18 +9,18 @@ type PostStatsProps = {
     userId: string;
 }
 
-const PostStats = ({ post, userId}: PostStatsProps) => {
+const PostStats = ({ post, userId }: PostStatsProps) => {
   const likesList = post.likes || [];
   //const likesList = post.likes ? post.likes.map((user: any) => user.userId) : [];
   const [likes, setLikes] = useState(likesList);
-  //const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   const { mutate: likePost } = useLikePost();
   //const { mutate: savePost } = useSavePost();
   //const { mutate: deleteSavedPost } = useDeleteSavedPost();
 
   const { user } = useUserContext();
-
+  
   useEffect(() => {
     setLikes(post.likes || []);
   }, [post.likes]);
@@ -28,7 +28,6 @@ const PostStats = ({ post, userId}: PostStatsProps) => {
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
   
-    // Optimistically updating the UI
     setLikes((currentLikes: string[]) => {
       if (currentLikes.includes(user.id)) {
         return currentLikes.filter((id) => id !== user.id);

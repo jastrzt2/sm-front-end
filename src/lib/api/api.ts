@@ -46,7 +46,7 @@ export async function signInAccount(user: { email: string; password: string; }) 
 
 export async function getCurrentUser(token: string) {
   try {
-    
+
     const response = await fetch('http://localhost:8080/api/v1/users/details', {
       method: 'GET',
       headers: {
@@ -54,7 +54,7 @@ export async function getCurrentUser(token: string) {
         'Authorization': `Bearer ${token}`
       },
     });
-    
+
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -84,7 +84,7 @@ export async function createPost(post: INewPost) {
   let uploadedFileUrl = "";
   let publicId = "";
   try {
-    if(post.file.length > 0){
+    if (post.file.length > 0) {
       const uploadResponse = await uploadFile(post.file);
       uploadedFileUrl = uploadResponse; // Save the public_id from the response
     }
@@ -132,14 +132,14 @@ export async function uploadFile(files: File[]) {
   try {
     // Replace `your_cloud_name` with your actual Cloudinary cloud name
     const cloudinaryURL = `https://api.cloudinary.com/v1_1/dyucisq5v/image/upload`;
-    
+
     const response = await fetch(cloudinaryURL, {
       method: 'POST',
       body: formData
     });
-    
+
     const data = await response.json();
-    
+
     if (data.secure_url) {
       return data.secure_url;
     } else {
@@ -224,7 +224,6 @@ export async function likePost(postId: string, userId: string) {
 
     if (response.ok) {
       const updatedPost = await response.json();
-      console.log("siema" + updatedPost)
       return updatedPost;
     } else {
       throw new Error('Network response was not ok');
@@ -234,11 +233,24 @@ export async function likePost(postId: string, userId: string) {
   }
 }
 
-// export async function savePost(postId: string, userId: string) {
-//   try {
-//     const updatedPost = await fetch(`http://localhost:8080/api/v1/posts/save/${postId}`, {
-//       return updatedPost;
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+export async function savePost(postId: string) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/users/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': `Bearer ${localStorage.getItem("token")}`, // Uncomment if using token-based auth
+      },
+      body: JSON.stringify({
+        userId: postId
+      })
+    });
+
+    if (response.ok) {
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
