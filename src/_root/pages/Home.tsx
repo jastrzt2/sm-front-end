@@ -5,7 +5,6 @@ import { useGetRecentPosts } from '@/lib/react-query/queriesAndMutations';
 
 export const Home = () => {
   const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
-  console.log(posts);
   return (
     <div className="flex flex-1">
       <div className="home-container">
@@ -17,8 +16,6 @@ export const Home = () => {
             <Loader />
           ) : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
-              
-            <div>fd</div>
               {posts?.map((post: {
                 [key: string]: any;
                 $id: string;

@@ -24,3 +24,7 @@ export function timeAgo(dateString: string): string {
   else if (months < 12) return `${months} months ago`;
   else return `${years} years ago`;
 }
+
+export function checkIsLiked(likes: string[], userId: string): boolean {
+  return likes.includes(userId);
+}

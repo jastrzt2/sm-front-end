@@ -188,3 +188,57 @@ export async function getRecentPosts() {
     throw error; // Rethrow to handle it in the calling context
   }
 }
+
+export async function getPostById(postId: string) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not OK');
+    }
+
+    const post = await response.json();
+    if (!post) {
+      throw new Error('Post not found');
+    }
+    console.log(post);
+
+    return post;
+  } catch (error) {
+    console.error(`Error fetching post with ID ${postId}:`, error);
+    throw error;
+  }
+}
+
+export async function likePost(postId: string, userId: string) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': `Bearer ${localStorage.getItem("token")}`, // Uncomment if using token-based auth
+      },
+      body: JSON.stringify({
+        userId: userId
+      })
+    });
+
+    if (response.ok) {
+      const updatedPost = await response.json();
+      console.log("siema" + updatedPost)
+      return updatedPost;
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// export async function savePost(postId: string, userId: string) {
+//   try {
+//     const updatedPost = await fetch(`http://localhost:8080/api/v1/posts/save/${postId}`, {
+//       return updatedPost;
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
