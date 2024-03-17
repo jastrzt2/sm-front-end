@@ -19,6 +19,7 @@ import { PostValidation } from "@/lib/validation"
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
 import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import Loader from "../shared/Loader"
 
 type PostFormProps = {
   post?: {
@@ -127,13 +128,16 @@ const PostForm = ({ post }: PostFormProps) => {
             </FormItem>
           )}
         />
-        <div className="flex gap-4 items-center justify-end">
+        <div className="flex gap-4 items-center justify-center">
           <Button type="button" className="shad-button_dark_4" onClick={() => navigate(-1)}>
             Cancel
           </Button>
           <Button type="submit" className="shad-button_primary whitespace-nowrap">
-            Submit
+          Submit
           </Button>
+          <div className="min-w-[24px]">
+          {isLoadingCreate && <Loader />}
+          </div>
         </div>
       </form>
     </Form>

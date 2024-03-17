@@ -46,7 +46,6 @@ export async function signInAccount(user: { email: string; password: string; }) 
 
 export async function getCurrentUser(token: string) {
   try {
-
     const response = await fetch('http://localhost:8080/api/v1/users/details', {
       method: 'GET',
       headers: {
@@ -54,7 +53,6 @@ export async function getCurrentUser(token: string) {
         'Authorization': `Bearer ${token}`
       },
     });
-
 
     if (!response.ok) {
       const errorData = await response.text();
@@ -81,34 +79,34 @@ export async function signOutAccount() {
 
 
 export async function createPost(post: INewPost) {
-  let uploadedFileUrl = "";
-  let publicId = "";
   try {
-    if (post.file.length > 0) {
-      const uploadResponse = await uploadFile(post.file);
-      uploadedFileUrl = uploadResponse; // Save the public_id from the response
-    }
+  const formData = new FormData();
+  
+  formData.append('userId', post.userId);
+  formData.append('caption', post.caption);
 
-    const newPost = {
-      userId: post.userId,
-      caption: post.caption,
-      location: post.location,
-      tags: post.tags,
-      imageUrl: uploadedFileUrl
-    };
+  formData.append('location', post.location || '');
+  formData.append('tags', post.tags || '');
 
+  if (post.file && post.file.length > 0) {
+    formData.append('file', post.file[0]);
+  }
 
-    const response = await fetch('http://localhost:8080/api/v1/posts', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
-      },
-      body: JSON.stringify(newPost)
-    });
+  const response = await fetch('http://localhost:8080/api/v1/posts', {
+    method: 'POST',
+    headers: {
+      // 'Content-Type': 'application/json', // chyba nie potrzebne ale trzeba sprawdzic
+      'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+    },
+    body: formData,
+  });
+    
+
+    console.log(response)
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      const errorData = await response.json();
+      throw new Error('Network response was not ok: ' + errorData.message); 
     }
 
     const data = await response.json();
@@ -116,66 +114,14 @@ export async function createPost(post: INewPost) {
     return data;
 
   } catch (error) {
-    console.error('Error signing out:', error);
-    if (publicId) {
-      await deleteImage(publicId); // Attempt to delete the uploaded image if post creation fails
-    }
-  }
-}
-
-export async function uploadFile(files: File[]) {
-  const file = files[0];
-
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', 'ykxu8scn');
-  try {
-    // Replace `your_cloud_name` with your actual Cloudinary cloud name
-    const cloudinaryURL = `https://api.cloudinary.com/v1_1/dyucisq5v/image/upload`;
-
-    const response = await fetch(cloudinaryURL, {
-      method: 'POST',
-      body: formData
-    });
-
-    const data = await response.json();
-
-    if (data.secure_url) {
-      return data.secure_url;
-    } else {
-      throw new Error('Cloudinary upload failed');
-    }
-  } catch (error) {
-    console.error('Upload error:', error);
-  }
-}
-
-async function deleteImage(publicId: string | Blob) {
-  try {
-    const cloudinaryURL = `https://api.cloudinary.com/v1_1/dyucisq5v/image/destroy`;
-    const formData = new FormData();
-    formData.append('public_id', publicId);
-    formData.append('api_key', 'your_api_key');
-
-    const response = await fetch(cloudinaryURL, {
-      method: 'POST',
-      body: formData
-    });
-
-    const data = await response.json();
-    if (data.result === 'ok') {
-      console.log('Image deleted successfully');
-    } else {
-      throw new Error('Cloudinary delete failed');
-    }
-  } catch (error) {
-    console.error('Delete image error:', error);
+    console.error('Error while creating post:', error);
   }
 }
 
 export async function getRecentPosts() {
   try {
     const response = await fetch("http://localhost:8080/api/v1/posts/getPosts");
+    console.log("response", response)
     if (!response.ok) {
       throw new Error('Network response was not OK');
     }
@@ -215,7 +161,7 @@ export async function likePost(postId: string, userId: string) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${localStorage.getItem("token")}`, // Uncomment if using token-based auth
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`, // Uncomment if using token-based auth
       },
       body: JSON.stringify({
         userId: userId
