@@ -34,10 +34,10 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ isAuthenticated, setIsAuthenticated ] = useState(false);
 
-    const checkAuthUser = async(token: string) => {
+    const checkAuthUser = async() => {
         try {
             setIsLoading(true);
-            const currentAccount = await getCurrentUser(token);
+            const currentAccount = await getCurrentUser();
             if (currentAccount) {
                 setUser({
                     id: currentAccount.id,
@@ -46,7 +46,7 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
                     email: currentAccount.email,
                     imageUrl: currentAccount.imageUrl,
                     bio: currentAccount.bio,
-                    saved_posts: currentAccount.saved_posts
+                    saved_posts: currentAccount.savedPosts
                 });
                 setIsAuthenticated(true);
                 return true;

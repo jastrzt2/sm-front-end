@@ -4,7 +4,7 @@ export type IContextType ={
   isAuthenticated: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-  checkAuthUser: (token: string) => Promise<boolean>;
+  checkAuthUser: () => Promise<boolean>;
 }
 
 export type INavLink = {

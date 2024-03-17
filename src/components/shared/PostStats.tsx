@@ -1,5 +1,5 @@
 import { useUserContext } from '@/context/AuthContext';
-import { useLikePost } from '@/lib/react-query/queriesAndMutations';
+import { useGetCurrentUser, useLikePost, useSavePost } from '@/lib/react-query/queriesAndMutations';
 import { checkIsLiked } from '@/lib/utils';
 import { IPost } from '@/types';
 import { useState, useEffect } from 'react';
@@ -16,14 +16,22 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
   const [isSaved, setIsSaved] = useState(false);
 
   const { mutate: likePost } = useLikePost();
-  //const { mutate: savePost } = useSavePost();
+  const { mutate: savePost } = useSavePost();
   //const { mutate: deleteSavedPost } = useDeleteSavedPost();
 
+
   const { user } = useUserContext();
+  //const { data: user, isLoading, isError, error } = useGetCurrentUser();
+  //console.log("User:", user, "Loading:", isLoading, "Error:", isError, "Error Details:", error);
+  
   
   useEffect(() => {
     setLikes(post.likes || []);
   }, [post.likes]);
+
+  useEffect(() => {
+    setIsSaved(user.saved_posts.includes(post.id) ?? false);
+  }, [user.saved_posts]);
 
   const handleLikePost = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -39,7 +47,15 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     likePost({ postId: post.id, userId: user.id});
   };
 
-  //const handleSavePost = () => {};
+  const handleSavePost = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  
+    setIsSaved((isSaved) => !isSaved);
+  
+    savePost( post.id);
+    console.log("koetk" + user.saved_posts)
+  };
+
 
   return (
     <div className="flex justify-between itmens-center z-20">
@@ -60,11 +76,14 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
         <div className="flex gap-2">
             <img 
-            src="/assets/icons/save.svg"
+            src={`${isSaved ? 
+              "/assets/icons/saved.svg"
+              : "/assets/icons/save.svg"}
+            `}
             alt="like"
             width={20}
             height={20}
-            onClick={ () => {} }
+            onClick={handleSavePost}
             className='cursor-pointer'
             />
         </div>

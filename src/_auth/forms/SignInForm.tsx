@@ -55,8 +55,8 @@ async function onSubmit(values: z.infer<typeof SignInValidation>) {
       });
     }
     console.log('User signed in successfully');
-
-    const isLoggedIn = await checkAuthUser(token);
+    localStorage.setItem('cookieFallback', token);
+    const isLoggedIn = await checkAuthUser();
 
     console.log('Is logged in:', isLoggedIn);
 

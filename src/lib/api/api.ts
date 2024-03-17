@@ -44,8 +44,9 @@ export async function signInAccount(user: { email: string; password: string; }) 
   }
 }
 
-export async function getCurrentUser(token: string) {
+export async function getCurrentUser() {
   try {
+    const token = localStorage.getItem("cookieFallback") || '';
     const response = await fetch('http://localhost:8080/api/v1/users/details', {
       method: 'GET',
       headers: {
@@ -60,6 +61,7 @@ export async function getCurrentUser(token: string) {
     }
 
     const data = await response.json();
+    console.log('Current user:', data);
     return data;
   }
   catch (error) {
@@ -185,10 +187,10 @@ export async function savePost(postId: string) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${localStorage.getItem("token")}`, // Uncomment if using token-based auth
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`, // Uncomment if using token-based auth
       },
       body: JSON.stringify({
-        userId: postId
+        postId: postId
       })
     });
 
