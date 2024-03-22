@@ -82,7 +82,7 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
             ) {
                 navigate("/sign-in");
             } else {
-                checkAuthUser(cookieFallback)
+                checkAuthUser()
             }
         }
     },[location.pathname]);

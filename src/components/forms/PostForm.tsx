@@ -18,8 +18,9 @@ import FileUploader from "../shared/FileUploader"
 import { PostValidation } from "@/lib/validation"
 import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
-import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 import Loader from "../shared/Loader"
+import { editPost } from "@/lib/api/api"
 
 type PostFormProps = {
   post?: {
@@ -31,10 +32,12 @@ type PostFormProps = {
     $updatedAt: string;
     $permissions: string[];
   }
+  action: 'Create' | 'Update';
 }
 
-const PostForm = ({ post }: PostFormProps) => {
+const PostForm = ({ post, action }: PostFormProps) => {
   const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost()
+  const { mutateAsync: updatePost, isPending: isUpdatingPost } = useUpdatePost()
   const { user } = useUserContext();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -45,12 +48,35 @@ const PostForm = ({ post }: PostFormProps) => {
       caption: post ? post?.caption : "",
       file: [],
       location: post ? post?.location : "",
-      tags: post ? post?.tags.join(',') : "",
+      tags: post ? post?.tags : "",
     },
   })
 
   async function onSubmit(values: z.infer<typeof PostValidation>) {
-    console.log('Post submitted', values);
+    if (post && action === 'Update') {
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl
+      });
+
+      if(!updatedPost){
+        toast({
+          title: "Please try again",
+        });
+      }
+      else {
+        toast({
+          title: "Post updated successfully",
+          color: "success",
+        });
+      }
+
+      return navigate(`/posts/${post.id}`);
+      
+    }
+
     const newPost = await createPost({
       ...values,
       userId: user.id
@@ -128,12 +154,13 @@ const PostForm = ({ post }: PostFormProps) => {
             </FormItem>
           )}
         />
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex gap-4 items-center justify-center mt-3">
           <Button type="button" className="shad-button_dark_4" onClick={() => navigate(-1)}>
             Cancel
           </Button>
           <Button type="submit" className="shad-button_primary whitespace-nowrap">
-          Submit
+          {isLoadingCreate || isUpdatingPost && 'Loading...'}
+          {action} Post
           </Button>
           <div className="min-w-[24px]">
           {isLoadingCreate && <Loader />}

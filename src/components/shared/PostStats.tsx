@@ -21,7 +21,6 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
 
   const { user } = useUserContext();
-  //const { data: user, isLoading, isError, error } = useGetCurrentUser();
   //console.log("User:", user, "Loading:", isLoading, "Error:", isError, "Error Details:", error);
   
   
@@ -53,12 +52,11 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     setIsSaved((isSaved) => !isSaved);
   
     savePost( post.id);
-    console.log("koetk" + user.saved_posts)
   };
 
 
   return (
-    <div className="flex justify-between itmens-center z-20">
+    <div className="flex justify-between itmens-center z-20 mt-2">
         <div className="flex gap-2 mr-5">
             <img 
             src={`${checkIsLiked(likes, userId) ? 

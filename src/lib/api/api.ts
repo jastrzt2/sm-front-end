@@ -1,16 +1,17 @@
-import { INewPost, INewUser } from "@/types";
+import { INewPost, INewUser, IUpdatePost } from "@/types";
 
 export async function createUserAccount(user: INewUser) {
   try {
-
-    const response = await fetch('http://localhost:8080/api/v1/users', {
+    console.log("tam" + JSON.stringify(user));
+    const response = await fetch('http://localhost:8080/api/v1/users/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(user),
     });
-
+    
+    console.log("tutaj" + response);
     const data = await response.json();
 
     return { success: response.ok, data };
@@ -47,6 +48,7 @@ export async function signInAccount(user: { email: string; password: string; }) 
 export async function getCurrentUser() {
   try {
     const token = localStorage.getItem("cookieFallback") || '';
+    console.log("Token" + token)
     const response = await fetch('http://localhost:8080/api/v1/users/details', {
       method: 'GET',
       headers: {
@@ -60,9 +62,9 @@ export async function getCurrentUser() {
       throw new Error(`Error fetching current user: ${errorData}`);
     }
 
-    const data = await response.json();
-    console.log('Current user:', data);
-    return data;
+    const user = await response.json();
+    console.log('Current user:', user);
+    return user;
   }
   catch (error) {
     console.error('Error getting current user:', error);
@@ -82,33 +84,33 @@ export async function signOutAccount() {
 
 export async function createPost(post: INewPost) {
   try {
-  const formData = new FormData();
-  
-  formData.append('userId', post.userId);
-  formData.append('caption', post.caption);
+    const formData = new FormData();
 
-  formData.append('location', post.location || '');
-  formData.append('tags', post.tags || '');
+    formData.append('userId', post.userId);
+    formData.append('caption', post.caption);
 
-  if (post.file && post.file.length > 0) {
-    formData.append('file', post.file[0]);
-  }
+    formData.append('location', post.location || '');
+    formData.append('tags', post.tags || '');
 
-  const response = await fetch('http://localhost:8080/api/v1/posts', {
-    method: 'POST',
-    headers: {
-      // 'Content-Type': 'application/json', // chyba nie potrzebne ale trzeba sprawdzic
-      'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
-    },
-    body: formData,
-  });
-    
+    if (post.file && post.file.length > 0) {
+      formData.append('file', post.file[0]);
+    }
+
+    const response = await fetch('http://localhost:8080/api/v1/posts', {
+      method: 'POST',
+      headers: {
+        // 'Content-Type': 'application/json', // chyba nie potrzebne ale trzeba sprawdzic
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      },
+      body: formData,
+    });
+
 
     console.log(response)
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error('Network response was not ok: ' + errorData.message); 
+      throw new Error('Network response was not ok: ' + errorData.message);
     }
 
     const data = await response.json();
@@ -133,13 +135,16 @@ export async function getRecentPosts() {
     return posts;
   } catch (error) {
     console.error('Error fetching recent posts:', error);
-    throw error; // Rethrow to handle it in the calling context
+    throw error;
   }
 }
 
-export async function getPostById(postId: string) {
+export async function getPostById(postId?: string) {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}`);
+    if (!postId) {
+      throw new Error('No post ID provided');
+    }
+    const response = await fetch(`http://localhost:8080/api/v1/posts/get/${postId}`);
     if (!response.ok) {
       throw new Error('Network response was not OK');
     }
@@ -163,7 +168,7 @@ export async function likePost(postId: string, userId: string) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`, // Uncomment if using token-based auth
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
       },
       body: JSON.stringify({
         userId: userId
@@ -187,7 +192,7 @@ export async function savePost(postId: string) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`, // Uncomment if using token-based auth
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
       },
       body: JSON.stringify({
         postId: postId
@@ -200,5 +205,73 @@ export async function savePost(postId: string) {
     }
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function editPost(post: IUpdatePost) {
+  try {
+    const formData = new FormData();
+
+    formData.append('caption', post.caption);
+    formData.append('postId', post.postId);
+
+    formData.append('location', post.location || '');
+    formData.append('tags', post.tags || '');
+
+    if (post.file && post.file.length > 0) {
+      formData.append('file', post.file[0]);
+    }
+
+    const response = await fetch('http://localhost:8080/api/v1/posts/edit', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      },
+      body: formData,
+    });
+
+
+    console.log(response)
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error('Network response was not ok: ' + errorData.message);
+    }
+
+    const data = await response.json();
+    console.log('Post updated:', data);
+    return data;
+
+  } catch (error) {
+    console.error('Error while creating post:', error);
+  }
+}
+
+export async function deletePost(postId: string) {
+  try {
+    
+    const formData = new FormData();
+
+    formData.append('postId', postId);
+    const response = await fetch('http://localhost:8080/api/v1/posts/delete', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      },
+      body: formData,
+    });
+
+    console.log(response)
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error('Network response was not ok: ' + errorData.message);
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error('Error while creating post:', error);
   }
 }

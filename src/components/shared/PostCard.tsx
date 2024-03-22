@@ -28,7 +28,7 @@ const PostCard = ({ post }: IPost) => {
               <p className="subtle-semibold lg:small-regular">
                 {timeAgo(post.createdAt)}
               </p>
-              -
+              •
               <p className="subtle-semibold lg:small-regular">
                 {post.location ? post.location : ''}
               </p>
@@ -40,7 +40,7 @@ const PostCard = ({ post }: IPost) => {
           <img src="/assets/icons/edit.svg" alt="edit" width={20} height={20} />
         </Link>
       </div>
-      <Link to={`/post/${post.id}`}>
+      <Link to={`/posts/${post.id}`}>
         <div className="small-medium lg:base-medium py-5">
           <p>{post.caption}</p>
           <ul className="flex gap-1 mt-2">
@@ -54,7 +54,7 @@ const PostCard = ({ post }: IPost) => {
         </div>
         <img src={post.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="post image" className="w-full" />
       </Link>
-
+                        
       <PostStats post={post} userId={user.id}/>
     </div>
   )
