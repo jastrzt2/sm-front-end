@@ -3,6 +3,7 @@ import { useGetCurrentUser, useLikePost, useSavePost } from '@/lib/react-query/q
 import { checkIsLiked } from '@/lib/utils';
 import { IPost } from '@/types';
 import { useState, useEffect } from 'react';
+import CommentsSection from './CommentsSection';
 
 type PostStatsProps = {
     post: IPost;
@@ -85,6 +86,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
             className='cursor-pointer'
             />
         </div>
+        
     </div>
   )
 }

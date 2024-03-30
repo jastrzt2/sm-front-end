@@ -34,7 +34,6 @@ export type INavLink = {
     postId: string;
     caption: string;
     imageId: string;
-    imageUrl: URL;
     file: File[];
     location?: string;
     tags?: string;
@@ -58,6 +57,30 @@ export type INavLink = {
   };
 
   export type IPost = {
+    id: string;
+    caption: string;
+    imageId: string;
+    imageUrl: string;
     [key: string]: any;
+  };
+
+  export type IComment = {
+    id?: string;
+    text: string;
+    userId: string;
+    postId: string;
+    createdAt: string;
+    updatedAt?: string;
+  };
+
+  export type NewComment = {
+    text: string;
+    userId: string;
+    postId: string;
+  };
+
+  export type EditCommentParams = {
+    commentId: string;
+    commentData: NewComment;
   };
 

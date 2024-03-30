@@ -1,4 +1,17 @@
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { EditCommentParams, INewPost, INewUser, IUpdatePost, NewComment } from "@/types";
+import { Query } from "@tanstack/react-query";
+
+export async function getUserById(userId: String) {
+  if (userId === '' || userId === null)
+    throw new Error('No user ID provided')
+  const response = await fetch(`http://localhost:8080/api/v1/users/${userId}`);
+  if (!response.ok) {
+    throw new Error('An Error while fetching user');
+  }
+  const user = response.json();
+  console.log('User from id '+ userId + 'user' + user)
+  return user;
+};
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -10,7 +23,7 @@ export async function createUserAccount(user: INewUser) {
       },
       body: JSON.stringify(user),
     });
-    
+
     console.log("tutaj" + response);
     const data = await response.json();
 
@@ -249,7 +262,7 @@ export async function editPost(post: IUpdatePost) {
 
 export async function deletePost(postId: string) {
   try {
-    
+
     const formData = new FormData();
 
     formData.append('postId', postId);
@@ -273,5 +286,146 @@ export async function deletePost(postId: string) {
 
   } catch (error) {
     console.error('Error while creating post:', error);
+  }
+}
+
+export async function addComment(comment: { postId: string; text: string; userId: string; }) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/comments/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
+      },
+      body: JSON.stringify(comment)
+    });
+
+    if (response.ok) {
+      const updatedPost = await response.json();
+      return updatedPost;
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getComments(postId: string) {
+  try {
+    if (!postId) {
+      throw new Error('No post ID provided');
+    }
+    const response = await fetch(`http://localhost:8080/api/v1/posts/getComments/${postId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not OK');
+    }
+
+    const comments = await response.json();
+    if (!comments) {
+      throw new Error('No comments fetched');
+    }
+    console.log(comments);
+
+    return comments;
+  } catch (error) {
+    console.error(`Error fetching comments of post with ID ${postId}:`, error);
+    throw error;
+  }
+}
+
+export async function deleteComment(commentId: string) {
+  try {
+    if (!commentId) {
+      throw new Error('No comment ID provided');
+    }
+    console.log("tutaj")
+    const response = await fetch(`http://localhost:8080/api/v1/comments/delete/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    console.log('Comment deleted successfully');
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    throw error;
+  }
+}
+
+export async function editComment(updatedComment: EditCommentParams) {
+  try {
+    if (!updatedComment.commentId) {
+      throw new Error('No comment ID provided');
+    }
+    const response = await fetch(`http://localhost:8080/api/v1/comments/edit/${updatedComment.commentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
+      },
+      body: JSON.stringify(updatedComment.commentData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const updatedPost = await response.json();
+    return updatedPost;
+  } catch (error) {
+    console.error('Error editing comment:', error);
+    throw error;
+  }
+}
+
+export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/posts/get?page=${pageParam}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+       },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const posts = await response.json(); 
+    console.log(posts); 
+    return posts; 
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    throw error; 
+  }
+}
+
+
+export async function searchPosts(searchTerm: string) {
+  try {
+    const response = await fetch('http://localhost:8080/api/v1/posts/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`, // Upewnij się, że token jest odpowiednio zarządzany
+      },
+      body: JSON.stringify({ searchTerm }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const posts = await response.json();
+    return posts; 
+  } catch (error) {
+    console.error('Error searching posts:', error);
+    throw error;
   }
 }

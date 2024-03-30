@@ -20,7 +20,6 @@ import { useUserContext } from "@/context/AuthContext"
 import { useToast } from "../ui/use-toast"
 import { useCreatePost, useUpdatePost } from "@/lib/react-query/queriesAndMutations"
 import Loader from "../shared/Loader"
-import { editPost } from "@/lib/api/api"
 
 type PostFormProps = {
   post?: {
