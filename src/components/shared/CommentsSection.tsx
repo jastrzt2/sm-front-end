@@ -1,5 +1,5 @@
 import { useUserContext } from '@/context/AuthContext';
-import { useAddComment, useGetComments, useGetPostById, useGetUserById } from '@/lib/react-query/queriesAndMutations';
+import { useAddComment, useGetComments, useGetPostById } from '@/lib/react-query/queriesAndMutations';
 import { IComment } from '@/types';
 import Comment from './Comment';
 import React, { useEffect, useState } from 'react';

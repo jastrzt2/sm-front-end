@@ -52,7 +52,13 @@ const PostCard = ({ post }: IPost) => {
             {post.tags}
           </ul>
         </div>
-        <img src={post.imageUrl || '/assets/icons/profile-placeholder.svg'} alt="post image" className="w-full" />
+        {post.imageUrl && (
+            <img
+              src={post.imageUrl}
+              alt="post"
+              className="post-card_img"
+            />
+          )}
       </Link>
                         
       <PostStats post={post} userId={user.id}/>

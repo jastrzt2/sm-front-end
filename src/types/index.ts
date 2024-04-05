@@ -37,6 +37,7 @@ export type INavLink = {
     file: File[];
     location?: string;
     tags?: string;
+    imageUrl: string;
   };
   
   export type IUser = {
@@ -45,8 +46,10 @@ export type INavLink = {
     username: string;
     email: string;
     imageUrl: string;
+    city: string;
     bio: string;
     saved_posts: string[];
+    liked_posts: string[];
   };
   
   export type INewUser = {

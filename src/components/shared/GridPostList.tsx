@@ -19,19 +19,31 @@ const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostList
             {posts.map((post) => (
                 <li key={post.id} className="relative min-w-80 h-80">
                     <Link to={`/posts/${post.id}`} className="grid-post_link">
-                        <img src={post.imageUrl} alt="post" className='h-full w-full object-cover' />
-                    </Link>
-
-                    <div className='grid-post_user'>
-                        {showUser && (
-                            <div className='flex'>
-                                <img src={post.creatorImageUrl ||
-                                    '/assets/icons/profile-placeholder.svg'} alt="user"
-                                    className="w-8 h-8 lg:h-12 lg:w-12 rounded-full" />
-
+                        {post.imageUrl ? (
+                            <img src={post.imageUrl} alt="post" className='h-full w-full object-cover' />
+                        ) : (
+                            <div className="h-full w-full flex items-center justify-center bg-dark-2">
+                                <p>{post.caption}</p> 
                             </div>
                         )}
-                        {showUser && <PostStats post={post} userId={user.id} />}
+                    </Link>
+                    <div className='grid-post_user'>
+                        {showUser && (
+                            <Link to={`/profile/${post.userId}`}>
+                                <div className="flex items-center justify-start gap-2 flex-1">
+                                    <img
+                                        src={
+                                            post.creatorImageUrl ||
+                                            "/assets/icons/profile-placeholder.svg"
+                                        }
+                                        alt="creator"
+                                        className="w-8 h-8 rounded-full"
+                                    />
+                                    <p className="line-clamp-1">{post.creatorName}</p>
+                                </div>
+                            </Link>
+                        )}
+                        {showStats && <PostStats post={post} userId={user.id} />}
                     </div>
                 </li>
             ))}

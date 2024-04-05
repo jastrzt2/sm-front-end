@@ -3,9 +3,10 @@ import {
     useQuery,
     useMutation,
     useQueryClient,
-    useInfiniteQuery
+    useInfiniteQuery,
+    useQueries
 } from '@tanstack/react-query'
-import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, getUserById, likePost, savePost, searchPosts, signInAccount, signOutAccount } from '../api/api'
+import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getCurrentUser, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likePost, savePost, searchPosts, signInAccount, signOutAccount } from '../api/api'
 import { QUERY_KEYS } from './queryKeys'
 
 export const useCreateUserAccount = () => {
@@ -70,6 +71,7 @@ export const useGetPostById = (postId?: string) => {
     });
 };
 
+
 export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
@@ -78,7 +80,6 @@ export const useGetPosts = () => {
             if (lastPage && lastPage.length === 0) {
                 return null;
             }
-            console.log("Strong" + lastPage + "siema" + lastPage.length + "elo ")
             const lastId = lastPage[lastPage.length - 1].id;
             return lastId;
         },
@@ -86,16 +87,26 @@ export const useGetPosts = () => {
     });
 };
 
-
-
-
-
 export const useSearchPosts = (searchQuery: string) => {
     return useQuery({
         queryKey: [QUERY_KEYS.GET_POSTS, searchQuery],
         queryFn: () => searchPosts(searchQuery),
         enabled: !!searchQuery,
     });
+}
+
+export const useGetSavedPosts = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_SAVED_POSTS],
+        queryFn: getSavedPosts,
+    });
+}
+
+export function useGetPostsList(postIds: string[]) {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_POSTS_LIST, postIds],
+        queryFn: getPostList,
+    })
 }
 
 //actions

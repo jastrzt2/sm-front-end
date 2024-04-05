@@ -2,6 +2,7 @@ import { EditCommentParams, INewPost, INewUser, IUpdatePost, NewComment } from "
 import { Query } from "@tanstack/react-query";
 
 export async function getUserById(userId: String) {
+  console.log()
   if (userId === '' || userId === null)
     throw new Error('No user ID provided')
   const response = await fetch(`http://localhost:8080/api/v1/users/${userId}`);
@@ -112,7 +113,6 @@ export async function createPost(post: INewPost) {
     const response = await fetch('http://localhost:8080/api/v1/posts', {
       method: 'POST',
       headers: {
-        // 'Content-Type': 'application/json', // chyba nie potrzebne ale trzeba sprawdzic
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
       },
       body: formData,
@@ -174,6 +174,46 @@ export async function getPostById(postId?: string) {
     throw error;
   }
 }
+
+export async function getSavedPosts() {
+  try {
+    const response = await fetch("http://localhost:8080/api/v1/users/getSavedPosts", {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not OK');
+    }
+    const posts = await response.json();
+    return posts;
+  } catch (error) {
+    console.error('Error fetching saved posts:', error);
+    throw error;
+  }
+}
+
+export async function getPostList({ queryKey }) {
+  const [, postIds] = queryKey;
+  const queryString = postIds.map(id => `ids=${encodeURIComponent(id)}`).join('&');
+  const url = `http://localhost:8080/api/v1/posts/getPostsList?${queryString}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not OK');
+    }
+    const posts = await response.json();
+    return posts;
+  } catch (error) {
+    console.error('Error fetching posts list:', error);
+    throw error;
+  }
+}
+
 
 export async function likePost(postId: string, userId: string) {
   try {
@@ -384,13 +424,20 @@ export async function editComment(updatedComment: EditCommentParams) {
   }
 }
 
-export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
+export async function getInfinitePosts({ pageParam }: { pageParam?: string }) {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/posts/get?page=${pageParam}`, {
+    console.log("pageParam (cursor)", pageParam);
+    const url = new URL('http://localhost:8080/api/v1/posts/get');
+    if (pageParam) {
+      url.searchParams.append('cursor', pageParam);
+    }
+    console.log("url", url);
+    
+    const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
-       },
+      },
     });
 
     if (!response.ok) {

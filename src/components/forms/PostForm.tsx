@@ -24,12 +24,6 @@ import Loader from "../shared/Loader"
 type PostFormProps = {
   post?: {
     [key: string]: any;
-    $id: string;
-    $collectionId: string;
-    $databaseId: string;
-    $createdAt: string;
-    $updatedAt: string;
-    $permissions: string[];
   }
   action: 'Create' | 'Update';
 }
@@ -154,15 +148,14 @@ const PostForm = ({ post, action }: PostFormProps) => {
           )}
         />
         <div className="flex gap-4 items-center justify-center mt-3">
-          <Button type="button" className="shad-button_dark_4" onClick={() => navigate(-1)}>
+          <Button type="button" className="shad-button_dark_4" disabled={isLoadingCreate || isUpdatingPost } onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button type="submit" className="shad-button_primary whitespace-nowrap">
-          {isLoadingCreate || isUpdatingPost && 'Loading...'}
+          <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isLoadingCreate || isUpdatingPost }>
           {action} Post
           </Button>
           <div className="min-w-[24px]">
-          {isLoadingCreate && <Loader />}
+          {isLoadingCreate || isUpdatingPost && <Loader />}
           </div>
         </div>
       </form>

@@ -2,6 +2,7 @@ import PostForm from '@/components/forms/PostForm';
 import Loader from '@/components/shared/Loader';
 import PostCard from '@/components/shared/PostCard';
 import { useGetRecentPosts } from '@/lib/react-query/queriesAndMutations';
+import { IPost } from '@/types';
 
 export const Home = () => {
   const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
@@ -16,16 +17,8 @@ export const Home = () => {
             <Loader />
           ) : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
-              {posts?.map((post: {
-                [key: string]: any;
-                $id: string;
-                $collectionId: string;
-                $databaseId: string;
-                $createdAt: string;
-                $updatedAt: string;
-                $permissions: string[];
-              }) => (
-                <li key={post.$id} className="flex justify-center w-full">
+              {posts?.map((post: IPost) => (
+                <li key={post.id} className="flex justify-center w-full">
                   <PostCard post={post} />
                 </li>
               ))}

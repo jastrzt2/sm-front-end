@@ -41,10 +41,11 @@ const Comment = ({ comment }: CommentProps) => {
 
   const saveChanges = () => {
     setIsEditing(false);
+    comment.text = editedText;
     const updatedCommentData: NewComment = {
       text: editedText,
       userId: comment.userId,
-      postId: comment.postId, 
+      postId: comment.postId,
     };
 
     const params: EditCommentParams = {
@@ -53,9 +54,9 @@ const Comment = ({ comment }: CommentProps) => {
     };
 
     editComment(params).then(() => {
-        setIsEditing(false); 
+      setIsEditing(false);
     }).catch(error => {
-        console.error("Error during saving comment:", error);
+      console.error("Error during saving comment:", error);
     });
   };
 
@@ -67,7 +68,7 @@ const Comment = ({ comment }: CommentProps) => {
   };
 
   return (
-    <div className="flex items-start space-x-4 comment-container">
+    <div className="flex items-start space-x-4 comment-container" style={{ position: 'relative' }}>
       <img src={user.imageUrl || "assets/icons/profile-placeholder.svg"} alt="Avatar" className="comment-avatar rounded-full"
       />
       <div className="comment-content">
@@ -82,29 +83,30 @@ const Comment = ({ comment }: CommentProps) => {
           <p className="comment-text" onDoubleClick={toggleEdit}>{comment.text}</p>
         )}
         {isEditing && (
-        <div className="flex flex-row gap-2">
-          <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded" onClick={saveChanges}>
-            Save
-          </button>
-          <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded" onClick={cancelEditing}>
-            Cancel
-          </button>
-        </div>
-      )}
-
-
-
-        <div onClick={openModal} className="menu-trigger">...</div>
-
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <div className="flex flex-col">
-            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
-             onClick={() => { handleEdit(); closeModal(); }}>Edit </button>
-            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
-             onClick={() => { handleDelete(); closeModal(); }}>Delete</button>
-            <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4" onClick={() => { }}>Report</button> 
+          <div className="flex flex-row gap-2">
+            <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded" onClick={saveChanges}>
+              Save
+            </button>
+            <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded" onClick={cancelEditing}>
+              Cancel
+            </button>
           </div>
-        </Modal>
+        )}
+
+        <div onClick={openModal} className="menu-trigger" style={{ cursor: 'pointer' }}>...</div>
+
+        {isModalOpen && (
+      <div className="modal-container" style={{ position: 'absolute', top: '20px', right: '0px' }}>
+        <div className="flex flex-col">
+            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
+              onClick={() => { handleEdit(); closeModal(); }}>Edit </button>
+            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
+              onClick={() => { handleDelete(); closeModal(); }}>Delete</button>
+            <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4" onClick={() => { }}>Report</button>
+          </div>
+    </div>
+  )}
+
       </div>
     </div>
 

@@ -9,11 +9,14 @@ import React from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {
+  
   const navigate = useNavigate();
   const { id } = useParams();
+  console.log("Details of post:", id);
   const { data: post, isLoading } = useGetPostById(id || '');
   const { user } = useUserContext();
   const { mutate: deletePost } = useDeletePost();
+
 
 
   const handleDeletePost = () => {
@@ -26,11 +29,13 @@ const PostDetails = () => {
       {isLoading ? <Loader /> : (
         <div>
           <div className="post_details-card">
-            <img
-              src={post.imageUrl}
-              alt="post"
-              className="post_details-img"
-            />
+            {post.imageUrl && (
+              <img
+                src={post.imageUrl}
+                alt="post"
+                className="post_details-img"
+              />
+            )}
 
             <div className="post_details-info">
               <div className="flex-between w-full">
