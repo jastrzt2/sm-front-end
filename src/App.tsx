@@ -7,6 +7,7 @@ import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Sa
 import AuthLayout from './_auth/AuthLayout'
 import RootLayout from './_root/RootLayout'
 import { Toaster } from "@/components/ui/toaster"
+import UserForm from './components/forms/UserForm'
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/update-post/:id" element={<EditPost />} />
         <Route path="/posts/:id" element={<PostDetails />} />
         <Route path="/profile/:id/*" element={<Profile />} />
+        <Route path="/profile/:id/edit" element={<UserForm />} />
         <Route path="/updadate-profile/:id" element={<UpdateProfile />} />
         </Route>
       </Routes>

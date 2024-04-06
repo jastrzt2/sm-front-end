@@ -56,7 +56,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
 
       if(!updatedPost){
         toast({
-          title: "Please try again",
+          title: "Updating post failed. Please try again",
         });
       }
       else {

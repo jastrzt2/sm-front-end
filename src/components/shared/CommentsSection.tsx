@@ -3,6 +3,7 @@ import { useAddComment, useGetComments, useGetPostById } from '@/lib/react-query
 import { IComment } from '@/types';
 import Comment from './Comment';
 import React, { useEffect, useState } from 'react';
+import Loader from './Loader';
 
 interface CommentsSectionProps {
   postId: string;
@@ -35,7 +36,7 @@ const CommentsSection = ({ postId, initialComments }: CommentsSectionProps) => {
     addComment(newComment);
   };
 
-  if (isLoading) return <div>Ładowanie komentarzy...</div>;
+  if (isLoading) return <Loader />;
   if (isError) return <div>Błąd podczas ładowania komentarzy.</div>;
 
   console.log("Comments:", fetchedComments);
@@ -58,7 +59,7 @@ const CommentsSection = ({ postId, initialComments }: CommentsSectionProps) => {
           className="mt-2 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600"
           onClick={handleAddComment}
         >
-          Dodaj komentarz
+          Add a comment
         </button>
       </div>
     </div>

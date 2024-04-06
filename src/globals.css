@@ -279,18 +279,6 @@
   }
 }
 
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
 .comment-text {
   word-wrap: break-word;
   word-break: break-all;
@@ -307,10 +295,6 @@
 .comment-content {
   flex: 1; 
   min-width: 0;
-}
-
-.menu-trigger {
-  position: relative;
 }
 
 .comment-menu {

@@ -1,8 +1,6 @@
-import { EditCommentParams, INewPost, INewUser, IUpdatePost, NewComment } from "@/types";
-import { Query } from "@tanstack/react-query";
+import { EditCommentParams, INewPost, INewUser, IUpdatePost, IUpdatedUser } from "@/types";
 
 export async function getUserById(userId: String) {
-  console.log()
   if (userId === '' || userId === null)
     throw new Error('No user ID provided')
   const response = await fetch(`http://localhost:8080/api/v1/users/${userId}`);
@@ -10,13 +8,11 @@ export async function getUserById(userId: String) {
     throw new Error('An Error while fetching user');
   }
   const user = response.json();
-  console.log('User from id '+ userId + 'user' + user)
   return user;
 };
 
 export async function createUserAccount(user: INewUser) {
   try {
-    console.log("tam" + JSON.stringify(user));
     const response = await fetch('http://localhost:8080/api/v1/users/create', {
       method: 'POST',
       headers: {
@@ -25,7 +21,39 @@ export async function createUserAccount(user: INewUser) {
       body: JSON.stringify(user),
     });
 
-    console.log("tutaj" + response);
+    const data = await response.json();
+
+    return { success: response.ok, data };
+  } catch (error) {
+    console.error('An error occurred while creating the user', error);
+    return { success: false, data: { string: "CreatingUserFailed" } };
+  }
+}
+
+export async function updateUser(user: IUpdatedUser) {
+  try {
+    if (!user.id) {
+      throw new Error('No user ID provided');
+    }
+    const formData = new FormData();
+    formData.append('name', user.name);
+    if (user.bio) formData.append('bio', user.bio);
+    if (user.city) formData.append('city', user.city);
+    if (user.file) formData.append('file', user.file[0]); // Dodaj plik jeśli istnieje
+
+    const response = await fetch(`http://localhost:8080/api/v1/users/update/${user.id}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      },
+      body: formData,
+    });
+
+
+    if (!response.ok) {
+      throw new Error('Network response was not OK');
+    }
+
     const data = await response.json();
 
     return { success: response.ok, data };
@@ -195,6 +223,9 @@ export async function getSavedPosts() {
 
 export async function getPostList({ queryKey }) {
   const [, postIds] = queryKey;
+  if (!postIds.length) {
+    return [];
+  }
   const queryString = postIds.map(id => `ids=${encodeURIComponent(id)}`).join('&');
   const url = `http://localhost:8080/api/v1/posts/getPostsList?${queryString}`;
   try {
@@ -379,7 +410,6 @@ export async function deleteComment(commentId: string) {
     if (!commentId) {
       throw new Error('No comment ID provided');
     }
-    console.log("tutaj")
     const response = await fetch(`http://localhost:8080/api/v1/comments/delete/${commentId}`, {
       method: 'DELETE',
       headers: {
@@ -426,12 +456,10 @@ export async function editComment(updatedComment: EditCommentParams) {
 
 export async function getInfinitePosts({ pageParam }: { pageParam?: string }) {
   try {
-    console.log("pageParam (cursor)", pageParam);
     const url = new URL('http://localhost:8080/api/v1/posts/get');
     if (pageParam) {
       url.searchParams.append('cursor', pageParam);
     }
-    console.log("url", url);
     
     const response = await fetch(url.toString(), {
       method: 'GET',

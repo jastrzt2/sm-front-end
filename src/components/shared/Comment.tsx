@@ -2,9 +2,10 @@ import { useUserContext } from "@/context/AuthContext";
 import { deleteComment } from "@/lib/api/api";
 import { useDeleteComment, useEditComment, useGetUserById } from "@/lib/react-query/queriesAndMutations";
 import { EditCommentParams, IComment, NewComment } from "@/types";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { set } from "react-hook-form";
+import Loader from "./Loader";
 
 
 
@@ -15,17 +16,34 @@ interface CommentProps {
 const Comment = ({ comment }: CommentProps) => {
   const { data: user, isLoading, isError, error } = useGetUserById(comment.userId);
   const { user: currentUser } = useUserContext();
+  const { mutateAsync: deleteComment } = useDeleteComment(comment.postId || "");
   const { mutateAsync: editComment, isPending: isSavingEditedComment } = useEditComment()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState("");
   const toggleEdit = () => setIsEditing(!isEditing);
+  const modalRef = useRef(null);
 
 
-  if (isLoading) return <div>Loading...</div>;
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false); 
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []); 
+
+
+  if (isLoading) return <Loader />;
   if (isError) return <div>Error loading user: {error.message}</div>;
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <Loader />;
 
   console.log("User:", user);
 
@@ -93,19 +111,19 @@ const Comment = ({ comment }: CommentProps) => {
           </div>
         )}
 
-        <div onClick={openModal} className="menu-trigger" style={{ cursor: 'pointer' }}>...</div>
+        <div onClick={openModal} className="inline-block" style={{ cursor: 'pointer' }}>...</div>
 
         {isModalOpen && (
-      <div className="modal-container" style={{ position: 'absolute', top: '20px', right: '0px' }}>
-        <div className="flex flex-col">
-            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
-              onClick={() => { handleEdit(); closeModal(); }}>Edit </button>
-            <button className={`bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
-              onClick={() => { handleDelete(); closeModal(); }}>Delete</button>
-            <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4" onClick={() => { }}>Report</button>
+          <div ref={modalRef} className="" style={{ position: 'absolute', zIndex: 1000 } }>
+            <div className="flex flex-col bg-white rounded-md shadow-lg">
+              <button className={`bg-dark-3 hover:bg-dark-4 text-white font-bold py-2 px-4 rounded-t-md ${currentUser.id !== comment.userId && 'hidden'}`}
+                onClick={() => { handleEdit(); closeModal(); }}>Edit </button>
+              <button className={`bg-dark-3 hover:bg-dark-4 text-white font-bold py-2 px-4 ${currentUser.id !== comment.userId && 'hidden'}`}
+                onClick={() => { handleDelete(); closeModal(); }}>Delete</button>
+              <button className="bg-dark-3 hover:bg-dark-4 text-white font-bold py-2 px-4 rounded-b-md" onClick={() => { }}>Report</button>
+            </div>
           </div>
-    </div>
-  )}
+        )}
 
       </div>
     </div>
@@ -123,7 +141,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="modal-backdrop" onClick={onClose}>
+    <div onClick={onClose}style={{ zIndex: 999 }} >
       <div className="bg-d p-2" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>

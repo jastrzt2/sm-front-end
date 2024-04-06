@@ -1,7 +1,7 @@
 import GridPostList from '@/components/shared/GridPostList';
 import Loader from '@/components/shared/Loader';
 import { useGetPostsList, useGetUserById } from '@/lib/react-query/queriesAndMutations';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const Profile = () => {
   const { id } = useParams();
@@ -35,6 +35,7 @@ const Profile = () => {
             </p>
           <p className="text-gray-600">{user.city}</p>
           <p className="text-white">{user.bio}</p>
+          <Link to={`/profile/${user.id}/edit`} className="text-primary-500">Edit Profile</Link>
         </div>
       </div>
       <div className="mt-6">

@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/lib/api/api';
+import { getCurrentUser, likePost } from '@/lib/api/api';
 import { IContextType, IUser } from '@/types';
 import exp from 'constants';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -12,7 +12,9 @@ export const INITIAL_USER = {
     email: '',
     imageUrl: '',
     bio: '',
-    saved_posts: []
+    city: '',
+    saved_posts: [],
+    liked_posts: []
 };
 
 const INITIAL_STATE = {
@@ -38,7 +40,8 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
         try {
             setIsLoading(true);
             const currentAccount = await getCurrentUser();
-            if (currentAccount) {
+            console.log('Current Account po załadowaniu:', currentAccount);
+            if (currentAccount) {   
                 setUser({
                     id: currentAccount.id,
                     name: currentAccount.name,
@@ -46,7 +49,9 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
                     email: currentAccount.email,
                     imageUrl: currentAccount.imageUrl,
                     bio: currentAccount.bio,
-                    saved_posts: currentAccount.savedPosts
+                    saved_posts: currentAccount.savedPosts,
+                    city: currentAccount.city,
+                    liked_posts: currentAccount.likedPosts
                 });
                 setIsAuthenticated(true);
                 return true;

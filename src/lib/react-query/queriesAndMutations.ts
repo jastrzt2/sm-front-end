@@ -1,4 +1,4 @@
-import { EditCommentParams, INewPost, INewUser, IUpdatePost, NewComment } from '@/types'
+import { EditCommentParams, INewPost, INewUser, IUpdatePost, IUpdatedUser, NewComment } from '@/types'
 import {
     useQuery,
     useMutation,
@@ -6,7 +6,7 @@ import {
     useInfiniteQuery,
     useQueries
 } from '@tanstack/react-query'
-import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getCurrentUser, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likePost, savePost, searchPosts, signInAccount, signOutAccount } from '../api/api'
+import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser } from '../api/api'
 import { QUERY_KEYS } from './queryKeys'
 
 export const useCreateUserAccount = () => {
@@ -38,6 +38,11 @@ export const useGetUserById = (userId?: string) => {
     });
 };
 
+export const useUpdateUser = () => {
+    return useMutation({
+        mutationFn: (user: IUpdatedUser) => updateUser(user)
+    })
+}
 
 //
 //  
@@ -185,6 +190,9 @@ export const useAddComment = () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_COMMENTS, data?.id],
+            });
         },
     });
 };
@@ -203,19 +211,20 @@ export const useEditComment = () => {
         mutationFn: (updatedCommentData: EditCommentParams) => editComment(updatedCommentData),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id],
+                queryKey: [QUERY_KEYS.GET_COMMENTS, data?.id],
             });
         },
     });
 };
 
-export const useDeleteComment = () => {
+export const useDeleteComment = (postId: string) => {
     const queryClient = useQueryClient();
+    
     return useMutation({
         mutationFn: (commentId: string) => deleteComment(commentId),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id],
+                queryKey: [QUERY_KEYS.GET_COMMENTS, postId],
             });
         },
     });
