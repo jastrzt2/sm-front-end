@@ -248,6 +248,8 @@ export async function getPostList({ queryKey }) {
 
 export async function likePost(postId: string, userId: string) {
   try {
+    if(postId === '' || postId === null)
+      throw new Error('No post ID provided')
     const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}/like`, {
       method: 'POST',
       headers: {
@@ -451,6 +453,29 @@ export async function editComment(updatedComment: EditCommentParams) {
   } catch (error) {
     console.error('Error editing comment:', error);
     throw error;
+  }
+}
+
+export async function likeComment(commentId: string) {
+  try {
+    if(commentId === '' || commentId === null)
+      throw new Error('No comment ID provided')
+    const response = await fetch(`http://localhost:8080/api/v1/comments/like/${commentId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
+      },
+    });
+
+    if (response.ok) {
+      const updatedComment = await response.json();
+      return updatedComment;
+    } else {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 

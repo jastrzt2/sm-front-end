@@ -73,6 +73,7 @@ export type INavLink = {
     postId: string;
     createdAt: string;
     updatedAt?: string;
+    likes: string[];
   };
 
   export type NewComment = {

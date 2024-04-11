@@ -12,17 +12,14 @@ type PostStatsProps = {
 
 const PostStats = ({ post, userId }: PostStatsProps) => {
   const likesList = post.likes || [];
-  //const likesList = post.likes ? post.likes.map((user: any) => user.userId) : [];
   const [likes, setLikes] = useState(likesList);
   const [isSaved, setIsSaved] = useState(false);
 
   const { mutate: likePost } = useLikePost();
   const { mutate: savePost } = useSavePost();
-  //const { mutate: deleteSavedPost } = useDeleteSavedPost();
 
 
   const { user } = useUserContext();
-  //console.log("User:", user, "Loading:", isLoading, "Error:", isError, "Error Details:", error);
   
   
   useEffect(() => {

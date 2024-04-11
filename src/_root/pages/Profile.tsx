@@ -1,22 +1,23 @@
 import GridPostList from '@/components/shared/GridPostList';
 import Loader from '@/components/shared/Loader';
+import { useUserContext } from '@/context/AuthContext';
 import { useGetPostsList, useGetUserById } from '@/lib/react-query/queriesAndMutations';
 import { Link, useParams } from 'react-router-dom';
 
 const Profile = () => {
   const { id } = useParams();
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useGetUserById(id);
+  const { user: currentUser } = useUserContext();
   const { data: userPosts, isLoading: isLoadingPosts, isError: isPostsError, error: postsError } = useGetPostsList(user?.posts || []);
 
   if (isLoadingUser || isLoadingPosts) {
-    return <Loader/>;
+    return <Loader />;
   }
 
   if (isUserError || isPostsError) {
     return <div>Error while fetching data.</div>;
   }
 
-  // Upewnij się, że wszystkie dane są załadowane
   if (!user || !userPosts) {
     return <div>No data available</div>;
   }
@@ -31,15 +32,17 @@ const Profile = () => {
         <div className="w-full md:w-2/3 flex flex-col justify-center">
           <h1 className="text-2xl font-bold">{user.name}</h1>
           <p className="small-regular text-light-3">
-              @{user.username}
-            </p>
+            @{user.username}
+          </p>
           <p className="text-gray-600">{user.city}</p>
           <p className="text-white">{user.bio}</p>
-          <Link to={`/profile/${user.id}/edit`} className="text-primary-500">Edit Profile</Link>
+          <div className={`${id !== currentUser.id && 'hidden'}`}>
+            <Link to={`/profile/${user.id}/edit`} className="text-primary-500">Edit Profile</Link>
+          </div>
         </div>
       </div>
       <div className="mt-6">
-        <GridPostList posts={userPosts} showUser={false} showStats={true}/>
+        <GridPostList posts={userPosts} showUser={false} showStats={true} />
       </div>
     </div>
   );
