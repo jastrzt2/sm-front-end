@@ -74,7 +74,9 @@ export async function signInAccount(user: { email: string; password: string; }) 
     });
 
     if (!response.ok) {
-      throw new Error('Failed to sign in');
+      const error = new Error(`Failed to sign in (Status ${response.status})`);
+      error.status = response.status; // Adding status to the error object
+      throw error;
     }
 
     const { token } = await response.json();
@@ -217,6 +219,31 @@ export async function getSavedPosts() {
     return posts;
   } catch (error) {
     console.error('Error fetching saved posts:', error);
+    throw error;
+  }
+}
+
+export async function watchUser(userIdToWatch: string) {
+  try {
+    const token = localStorage.getItem("cookieFallback") || '';
+    const response = await fetch('http://localhost:8080/api/v1/users/watch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId: userIdToWatch }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to watch user (Status: ${response.status}): ${errorData.message}`);
+    }
+
+    const result = await response.json();
+    return result; 
+  } catch (error) {
+    console.error('Error while setting user to watch:', error);
     throw error;
   }
 }
@@ -529,3 +556,5 @@ export async function searchPosts(searchTerm: string) {
     throw error;
   }
 }
+
+

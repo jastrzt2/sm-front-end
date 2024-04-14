@@ -41,6 +41,7 @@ export type INavLink = {
     bio: string;
     saved_posts: string[];
     liked_posts: string[];
+    watched: string[];
   };
   
   export type INewUser = {

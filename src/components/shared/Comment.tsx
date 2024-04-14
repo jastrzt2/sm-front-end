@@ -34,7 +34,7 @@ const Comment = ({ comment }: CommentProps) => {
 
   const handleLikeComment = (e: React.MouseEvent) => {
     e.stopPropagation();
-  
+
     setLikes((currentLikes: string[]) => {
       if (currentLikes.includes(currentUser.id)) {
         return currentLikes.filter((id) => id !== currentUser.id);
@@ -42,7 +42,7 @@ const Comment = ({ comment }: CommentProps) => {
         return [...currentLikes, currentUser.id];
       }
     });
-  
+
     likeComment(comment.id || "");
   };
 
@@ -51,7 +51,7 @@ const Comment = ({ comment }: CommentProps) => {
   useEffect(() => {
     function handleClickOutside(event) {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setIsModalOpen(false); 
+        setIsModalOpen(false);
       }
     }
 
@@ -60,7 +60,7 @@ const Comment = ({ comment }: CommentProps) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []); 
+  }, []);
 
 
   if (isLoading) return <Loader />;
@@ -116,9 +116,9 @@ const Comment = ({ comment }: CommentProps) => {
         <div className="font-bold flex flex-row items-center">
           {user?.name}&nbsp;&nbsp;
           <p className="text-light-3 small-regular"> • {timeAgo(comment.createdAt)}</p>
-        <div onClick={openModal} className="inline-block " style={{ cursor: 'pointer', marginLeft: 'auto' }}>...</div>
+          <div onClick={openModal} className="inline-block " style={{ cursor: 'pointer', marginLeft: 'auto' }}>...</div>
         </div>
-        
+
         {isEditing ? (
           <textarea
             className="comment-textarea bg-dark-3 rounded p-2 w-full"
@@ -128,9 +128,9 @@ const Comment = ({ comment }: CommentProps) => {
         ) : (
           <p className="comment-text" onDoubleClick={toggleEdit}>{comment.text}</p>
         )}
-        <div className="flex gap-2 mr-5">
-            <img 
-            src={`${checkIsLiked(likes, currentUser.id) ? 
+        <div className="flex gap-2 mr-5 mt-0.5">
+          <img
+            src={`${checkIsLiked(likes, currentUser.id) ?
               "/assets/icons/liked.svg"
               : "/assets/icons/like.svg"}
             `}
@@ -139,8 +139,8 @@ const Comment = ({ comment }: CommentProps) => {
             height={20}
             onClick={handleLikeComment}
             className='cursor-pointer'
-            />
-            <p className="small-medium lg:base-medium">{likes.length}</p>
+          />
+          <p className="small-medium lg:base-medium">{likes.length}</p>
         </div>
         {isEditing && (
           <div className="flex flex-row gap-2">
@@ -154,7 +154,10 @@ const Comment = ({ comment }: CommentProps) => {
         )}
 
         {isModalOpen && (
-          <div ref={modalRef} className="" style={{ position: 'absolute', zIndex: 1000 } }>
+          <div ref={modalRef} className="" style={{
+            position: 'absolute', zIndex: 1000, right: 10,
+            transform: 'translateY(-100%)'
+          }}>
             <div className="flex flex-col bg-white rounded-md shadow-lg">
               <button className={`bg-dark-3 hover:bg-dark-4 text-white font-bold py-2 px-4 rounded-t-md ${currentUser.id !== comment.userId && 'hidden'}`}
                 onClick={() => { handleEdit(); closeModal(); }}>Edit </button>
@@ -181,7 +184,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div onClick={onClose}style={{ zIndex: 999 }} >
+    <div onClick={onClose} style={{ zIndex: 999 }} >
       <div className="bg-d p-2" onClick={(e) => e.stopPropagation()}>
         {children}
       </div>

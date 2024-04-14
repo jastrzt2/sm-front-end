@@ -6,7 +6,7 @@ import {
     useInfiniteQuery,
     useQueries
 } from '@tanstack/react-query'
-import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likeComment, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser } from '../api/api'
+import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likeComment, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser, watchUser } from '../api/api'
 import { QUERY_KEYS } from './queryKeys'
 
 export const useCreateUserAccount = () => {
@@ -115,6 +115,22 @@ export function useGetPostsList(postIds: string[]) {
 }
 
 //actions
+
+export const useWatchUser = (userId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (userId: string) => watchUser(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+            });
+        },
+    });
+}
 
 export const useLikePost = () => {
     const queryClient = useQueryClient();

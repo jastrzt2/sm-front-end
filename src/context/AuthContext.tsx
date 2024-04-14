@@ -1,6 +1,7 @@
 import { getCurrentUser, likePost } from '@/lib/api/api';
 import { IContextType, IUser } from '@/types';
 import exp from 'constants';
+import { watch } from 'fs';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { set } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
@@ -14,7 +15,8 @@ export const INITIAL_USER = {
     bio: '',
     city: '',
     saved_posts: [],
-    liked_posts: []
+    liked_posts: [],
+    watched: []
 };
 
 const INITIAL_STATE = {
@@ -51,7 +53,8 @@ export const AuthProvider = ( { children }: {children: React.ReactNode}) => {
                     bio: currentAccount.bio,
                     saved_posts: currentAccount.savedPosts,
                     city: currentAccount.city,
-                    liked_posts: currentAccount.likedPosts
+                    liked_posts: currentAccount.likedPosts,
+                    watched: currentAccount.watched
                 });
                 setIsAuthenticated(true);
                 return true;

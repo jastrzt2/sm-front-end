@@ -1,7 +1,9 @@
 import GridPostList from '@/components/shared/GridPostList';
 import Loader from '@/components/shared/Loader';
+import { Button } from '@/components/ui/button';
 import { useUserContext } from '@/context/AuthContext';
-import { useGetPostsList, useGetUserById } from '@/lib/react-query/queriesAndMutations';
+import { useGetPostsList, useGetUserById, useWatchUser } from '@/lib/react-query/queriesAndMutations';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 const Profile = () => {
@@ -9,6 +11,9 @@ const Profile = () => {
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useGetUserById(id);
   const { user: currentUser } = useUserContext();
   const { data: userPosts, isLoading: isLoadingPosts, isError: isPostsError, error: postsError } = useGetPostsList(user?.posts || []);
+  const { mutate: watchUser, isPending, isError } = useWatchUser(id || "");
+  const [isWatching, setIsWatching] = useState(currentUser?.watched?.includes(id || ""));
+
 
   if (isLoadingUser || isLoadingPosts) {
     return <Loader />;
@@ -22,6 +27,15 @@ const Profile = () => {
     return <div>No data available</div>;
   }
   console.log("User:", user);
+
+  const handleWatch = () => {
+    watchUser(id || "");
+    if (isWatching) {
+        setIsWatching(false);
+    } else {
+        setIsWatching(true);
+    }
+};
 
   return (
     <div className="max-w-5xl mx-auto p-4">
@@ -38,6 +52,11 @@ const Profile = () => {
           <p className="text-white">{user.bio}</p>
           <div className={`${id !== currentUser.id && 'hidden'}`}>
             <Link to={`/profile/${user.id}/edit`} className="text-primary-500">Edit Profile</Link>
+          </div>
+          <div className={`${id === currentUser.id && 'hidden'}`}>
+            <Button className='bg-primary-600 mt-5' onClick={handleWatch}>
+              {isWatching ? 'Unwatch' : 'Watch'}
+            </Button>
           </div>
         </div>
       </div>
