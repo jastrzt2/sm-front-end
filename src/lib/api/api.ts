@@ -67,7 +67,7 @@ export async function updateUser(user: IUpdatedUser) {
 
 export async function signInAccount(user: { email: string; password: string; }) {
   try {
-    const response = await fetch('http://localhost:8080/api/auth/signin', {
+    const response = await fetch(`${API_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
