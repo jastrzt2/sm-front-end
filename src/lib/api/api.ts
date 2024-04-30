@@ -1,6 +1,7 @@
 import { EditCommentParams, INewPost, INewUser, IUpdatePost, IUpdatedUser } from "@/types";
 console.log(process.env);
 const API_URL = process.env.VITE_API_URL || process.env.API_URL;
+require('dotenv').config();
 
 console.log('API URL:', API_URL);
 
