@@ -3,7 +3,7 @@ name: Build and Deploy React App to Azure
 on:
   push:
     branches:
-      - master  # Gałąź, z której chcesz wdrażać
+      - main  # Gałąź, z której chcesz wdrażać
 
 jobs:
   build:
