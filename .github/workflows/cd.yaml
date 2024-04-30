@@ -26,6 +26,6 @@ jobs:
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: '<bobrgram>'  # Nazwa aplikacji webowej na Azure
+          app-name: 'bobrgram'  # Nazwa aplikacji webowej na Azure
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Sekret przechowywany w GitHub Secrets
           package: './build'  # Ścieżka do folderu wyjściowego aplikacji React
