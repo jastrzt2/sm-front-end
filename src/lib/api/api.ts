@@ -1,9 +1,11 @@
 import { EditCommentParams, INewPost, INewUser, IUpdatePost, IUpdatedUser } from "@/types";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function getUserById(userId: String) {
   if (userId === '' || userId === null)
     throw new Error('No user ID provided')
-  const response = await fetch(`http://localhost:8080/api/v1/users/${userId}`);
+  const response = await fetch(`${API_URL}/users/${userId}`);
   if (!response.ok) {
     throw new Error('An Error while fetching user');
   }
@@ -13,7 +15,7 @@ export async function getUserById(userId: String) {
 
 export async function createUserAccount(user: INewUser) {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/users/create', {
+    const response = await fetch(`${API_URL}/users/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +43,7 @@ export async function updateUser(user: IUpdatedUser) {
     if (user.city) formData.append('city', user.city);
     if (user.file) formData.append('file', user.file[0]); // Dodaj plik jeśli istnieje
 
-    const response = await fetch(`http://localhost:8080/api/v1/users/update/${user.id}`, {
+    const response = await fetch(`${API_URL}/users/update/${user.id}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
@@ -93,7 +95,7 @@ export async function getCurrentUser() {
   try {
     const token = localStorage.getItem("cookieFallback") || '';
     console.log("Token" + token)
-    const response = await fetch('http://localhost:8080/api/v1/users/details', {
+    const response = await fetch(`${API_URL}/users/details`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -140,7 +142,7 @@ export async function createPost(post: INewPost) {
       formData.append('file', post.file[0]);
     }
 
-    const response = await fetch('http://localhost:8080/api/v1/posts', {
+    const response = await fetch(`${API_URL}/posts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
@@ -167,7 +169,7 @@ export async function createPost(post: INewPost) {
 
 export async function getRecentPosts() {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/posts/getPosts', {
+    const response = await fetch(`${API_URL}/posts/getPosts`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -193,7 +195,7 @@ export async function getPostById(postId?: string) {
     if (!postId) {
       throw new Error('No post ID provided');
     }
-    const response = await fetch(`http://localhost:8080/api/v1/posts/get/${postId}`);
+    const response = await fetch(`${API_URL}/posts/get/${postId}`);
     if (!response.ok) {
       throw new Error('Network response was not OK');
     }
@@ -213,7 +215,7 @@ export async function getPostById(postId?: string) {
 
 export async function getSavedPosts() {
   try {
-    const response = await fetch("http://localhost:8080/api/v1/users/getSavedPosts", {
+    const response = await fetch(`${API_URL}/users/getSavedPosts`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
       }
@@ -232,7 +234,7 @@ export async function getSavedPosts() {
 export async function watchUser(userIdToWatch: string) {
   try {
     const token = localStorage.getItem("cookieFallback") || '';
-    const response = await fetch('http://localhost:8080/api/v1/users/watch', {
+    const response = await fetch(`${API_URL}/users/watch`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -260,7 +262,7 @@ export async function getPostList({ queryKey }) {
     return [];
   }
   const queryString = postIds.map(id => `ids=${encodeURIComponent(id)}`).join('&');
-  const url = `http://localhost:8080/api/v1/posts/getPostsList?${queryString}`;
+  const url = `${API_URL}/posts/getPostsList?${queryString}`;
   try {
     const response = await fetch(url, {
       headers: {
@@ -283,7 +285,7 @@ export async function likePost(postId: string, userId: string) {
   try {
     if(postId === '' || postId === null)
       throw new Error('No post ID provided')
-    const response = await fetch(`http://localhost:8080/api/v1/posts/${postId}/like`, {
+    const response = await fetch(`${API_URL}/posts/${postId}/like`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -307,7 +309,7 @@ export async function likePost(postId: string, userId: string) {
 
 export async function savePost(postId: string) {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/users/save`, {
+    const response = await fetch(`${API_URL}/users/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -341,7 +343,7 @@ export async function editPost(post: IUpdatePost) {
       formData.append('file', post.file[0]);
     }
 
-    const response = await fetch('http://localhost:8080/api/v1/posts/edit', {
+    const response = await fetch(`${API_URL}/posts/edit`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
@@ -372,7 +374,7 @@ export async function deletePost(postId: string) {
     const formData = new FormData();
 
     formData.append('postId', postId);
-    const response = await fetch('http://localhost:8080/api/v1/posts/delete', {
+    const response = await fetch(`${API_URL}/posts/delete`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
@@ -397,7 +399,7 @@ export async function deletePost(postId: string) {
 
 export async function addComment(comment: { postId: string; text: string; userId: string; }) {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/comments/create`, {
+    const response = await fetch(`${API_URL}/comments/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -422,7 +424,7 @@ export async function getComments(postId: string) {
     if (!postId) {
       throw new Error('No post ID provided');
     }
-    const response = await fetch(`http://localhost:8080/api/v1/posts/getComments/${postId}`);
+    const response = await fetch(`${API_URL}/posts/getComments/${postId}`);
     if (!response.ok) {
       throw new Error('Network response was not OK');
     }
@@ -445,7 +447,7 @@ export async function deleteComment(commentId: string) {
     if (!commentId) {
       throw new Error('No comment ID provided');
     }
-    const response = await fetch(`http://localhost:8080/api/v1/comments/delete/${commentId}`, {
+    const response = await fetch(`${API_URL}/comments/delete/${commentId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
@@ -468,7 +470,7 @@ export async function editComment(updatedComment: EditCommentParams) {
     if (!updatedComment.commentId) {
       throw new Error('No comment ID provided');
     }
-    const response = await fetch(`http://localhost:8080/api/v1/comments/edit/${updatedComment.commentId}`, {
+    const response = await fetch(`${API_URL}/comments/edit/${updatedComment.commentId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -493,7 +495,7 @@ export async function likeComment(commentId: string) {
   try {
     if(commentId === '' || commentId === null)
       throw new Error('No comment ID provided')
-    const response = await fetch(`http://localhost:8080/api/v1/comments/like/${commentId}`, {
+    const response = await fetch(`${API_URL}/comments/like/${commentId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -514,7 +516,7 @@ export async function likeComment(commentId: string) {
 
 export async function getInfinitePosts({ pageParam }: { pageParam?: string }) {
   try {
-    const url = new URL('http://localhost:8080/api/v1/posts/get');
+    const url = new URL(`${API_URL}/posts/get`);
     if (pageParam) {
       url.searchParams.append('cursor', pageParam);
     }
@@ -542,7 +544,7 @@ export async function getInfinitePosts({ pageParam }: { pageParam?: string }) {
 
 export async function searchPosts(searchTerm: string) {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/posts/search', {
+    const response = await fetch(`${API_URL}/posts/search`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

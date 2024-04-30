@@ -1,0 +1,31 @@
+name: Build and Deploy React App to Azure
+
+on:
+  push:
+    branches:
+      - master  # Gałąź, z której chcesz wdrażać
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Możesz wybrać wersję Node.js odpowiednią dla twojego projektu
+
+      - name: Install Dependencies
+        run: npm install  # Możesz użyć 'yarn install', jeśli używasz Yarna
+
+      - name: Build React App
+        run: npm run build  # Dostosuj do skryptu budującego w twoim package.json
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: '<bobrgram>'  # Nazwa aplikacji webowej na Azure
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Sekret przechowywany w GitHub Secrets
+          package: './build'  # Ścieżka do folderu wyjściowego aplikacji React
