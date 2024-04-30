@@ -1,11 +1,10 @@
-import PostForm from '@/components/forms/PostForm';
 import Loader from '@/components/shared/Loader';
 import PostCard from '@/components/shared/PostCard';
 import { useGetRecentPosts } from '@/lib/react-query/queriesAndMutations';
 import { IPost } from '@/types';
 
 export const Home = () => {
-  const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
+  const { data: posts, isLoading: isPostLoading } = useGetRecentPosts();
   return (
     <div className="flex flex-1">
       <div className="home-container">

@@ -4,7 +4,7 @@ import { IPost } from "@/types"
 import { Link } from "react-router-dom"
 import PostStats from "./PostStats";
 
-const PostCard = ({ post }: IPost) => {
+const PostCard = ({ post }: { post: IPost }) => {
   const { user } = useUserContext();
 
 

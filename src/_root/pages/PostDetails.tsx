@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { useUserContext } from '@/context/AuthContext';
 import { useDeletePost, useGetPostById } from '@/lib/react-query/queriesAndMutations'
 import { timeAgo } from '@/lib/utils';
-import React from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {

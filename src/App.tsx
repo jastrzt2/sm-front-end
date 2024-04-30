@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import './globals.css'
 import SignInForm from './_auth/forms/SignInForm'
 import SignUpForm from './_auth/forms/SignUpForm'
-import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile } from './_root/pages'
+import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved } from './_root/pages'
 import AuthLayout from './_auth/AuthLayout'
 import RootLayout from './_root/RootLayout'
 import { Toaster } from "@/components/ui/toaster"
@@ -30,7 +30,6 @@ const App = () => {
         <Route path="/posts/:id" element={<PostDetails />} />
         <Route path="/profile/:id/*" element={<Profile />} />
         <Route path="/profile/:id/edit" element={<UserForm />} />
-        <Route path="/updadate-profile/:id" element={<UpdateProfile />} />
         </Route>
       </Routes>
       <Toaster />

@@ -1,8 +1,8 @@
 import { useUserContext } from '@/context/AuthContext';
-import { useAddComment, useGetComments, useGetPostById } from '@/lib/react-query/queriesAndMutations';
+import { useAddComment, useGetComments } from '@/lib/react-query/queriesAndMutations';
 import { IComment } from '@/types';
 import Comment from './Comment';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loader from './Loader';
 
 interface CommentsSectionProps {
@@ -10,7 +10,7 @@ interface CommentsSectionProps {
   initialComments: IComment[];
 }
 
-const CommentsSection = ({ postId, initialComments }: CommentsSectionProps) => {
+const CommentsSection = ({ postId }: CommentsSectionProps) => {
   const { data: fetchedComments, isLoading, isError } = useGetComments(postId);
   const [comments, setComments] = useState<IComment[]>([]);
   const [newCommentText, setNewCommentText] = useState('');
@@ -30,6 +30,7 @@ const CommentsSection = ({ postId, initialComments }: CommentsSectionProps) => {
       postId: postId,
       createdAt: new Date().toISOString(),
       text: newCommentText,
+      likes: []
     };
     setComments(prev => [...prev, newComment]);
     setNewCommentText('');

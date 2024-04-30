@@ -8,10 +8,10 @@ import { Link, useParams } from 'react-router-dom';
 
 const Profile = () => {
   const { id } = useParams();
-  const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useGetUserById(id);
+  const { data: user, isLoading: isLoadingUser, isError: isUserError } = useGetUserById(id);
   const { user: currentUser } = useUserContext();
-  const { data: userPosts, isLoading: isLoadingPosts, isError: isPostsError, error: postsError } = useGetPostsList(user?.posts || []);
-  const { mutate: watchUser, isPending, isError } = useWatchUser(id || "");
+  const { data: userPosts, isLoading: isLoadingPosts, isError: isPostsError } = useGetPostsList(user?.posts || []);
+  const { mutate: watchUser } = useWatchUser(id || "");
   const [isWatching, setIsWatching] = useState(currentUser?.watched?.includes(id || ""));
 
 

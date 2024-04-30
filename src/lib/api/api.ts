@@ -76,11 +76,10 @@ export async function signInAccount(user: { email: string; password: string; }) 
     });
 
     if (!response.ok) {
-      const error = new Error(`Failed to sign in (Status ${response.status})`);
+      const error: any = new Error(`Failed to sign in (Status ${response.status})`);
       error.status = response.status; // Adding status to the error object
       throw error;
     }
-
     const { token } = await response.json();
     localStorage.setItem('cookieFallback', token);
 
@@ -256,12 +255,16 @@ export async function watchUser(userIdToWatch: string) {
   }
 }
 
-export async function getPostList({ queryKey }) {
+interface CustomQueryKey {
+  queryKey: [string, string[]];
+}
+
+export async function getPostList({ queryKey }: CustomQueryKey) {
   const [, postIds] = queryKey;
   if (!postIds.length) {
     return [];
   }
-  const queryString = postIds.map(id => `ids=${encodeURIComponent(id)}`).join('&');
+  const queryString = postIds.map((id: string | number | boolean) => `ids=${encodeURIComponent(id)}`).join('&');
   const url = `${API_URL}/posts/getPostsList?${queryString}`;
   try {
     const response = await fetch(url, {

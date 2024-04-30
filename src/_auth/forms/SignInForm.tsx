@@ -8,7 +8,6 @@ import { useState } from "react"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -71,9 +70,10 @@ async function onSubmit(values: z.infer<typeof SignInValidation>) {
       });
       navigate('/sign-in');
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error during sign in:', error);
 
+  if (error.status) {
     // Handle authorization errors
     if (error.status === 401) {
       toast({
@@ -91,13 +91,19 @@ async function onSubmit(values: z.infer<typeof SignInValidation>) {
         duration: 5000,
       });
     } else {
-      // Handle server errors
+      // Handle other server errors
       toast({
         title: "An unexpected error occurred. Please try again later.",
         duration: 5000,
       });
     }
-
+  } else {
+    // Handle other types of errors
+    toast({
+      title: "An unexpected error occurred. Please try again later.",
+      duration: 5000,
+    });
+  }
     navigate('/sign-in');
   }
 }

@@ -3,9 +3,7 @@ import {
     useQuery,
     useMutation,
     useQueryClient,
-    useInfiniteQuery,
-    useQueries
-} from '@tanstack/react-query'
+    useInfiniteQuery} from '@tanstack/react-query'
 import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likeComment, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser, watchUser } from '../api/api'
 import { QUERY_KEYS } from './queryKeys'
 
@@ -255,7 +253,7 @@ export const useDeleteComment = (postId: string) => {
     
     return useMutation({
         mutationFn: (commentId: string) => deleteComment(commentId),
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [QUERY_KEYS.GET_COMMENTS, postId],
             });
