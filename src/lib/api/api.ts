@@ -167,7 +167,13 @@ export async function createPost(post: INewPost) {
 
 export async function getRecentPosts() {
   try {
-    const response = await fetch("http://localhost:8080/api/v1/posts/getPosts");
+    const response = await fetch('http://localhost:8080/api/v1/posts/getPosts', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`,
+      },
+    });
     console.log("response", response)
     if (!response.ok) {
       throw new Error('Network response was not OK');
