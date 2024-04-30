@@ -1,7 +1,7 @@
 import { EditCommentParams, INewPost, INewUser, IUpdatePost, IUpdatedUser } from "@/types";
 console.log(process.env);
 
-const API_URL = process.env.VITE_API_URL || process.env.VITE_API_URL;
+const API_URL = process.env.VITE_API_URL || process.env.VITE_API_URL || 'beaver-backend.azurewebsites.net';
 
 console.log('API URL:', API_URL);
 
