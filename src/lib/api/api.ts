@@ -67,7 +67,7 @@ export async function updateUser(user: IUpdatedUser) {
 
 export async function signInAccount(user: { email: string; password: string; }) {
   try {
-    const response = await fetch(`${API_URL}/auth/signin`, {
+    const response = await fetch(`beaver-backend.azurewebsites.net/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
