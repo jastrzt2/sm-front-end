@@ -140,7 +140,6 @@ export async function createPost(post: INewPost) {
     formData.append('caption', post.caption);
 
     formData.append('location', post.location || '');
-    formData.append('tags', post.tags || '');
 
     if (post.file && post.file.length > 0) {
       formData.append('file', post.file[0]);
@@ -345,7 +344,6 @@ export async function editPost(post: IUpdatePost) {
     formData.append('postId', post.postId);
 
     formData.append('location', post.location || '');
-    formData.append('tags', post.tags || '');
 
     if (post.file && post.file.length > 0) {
       formData.append('file', post.file[0]);

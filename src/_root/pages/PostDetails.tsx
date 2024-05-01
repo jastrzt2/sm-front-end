@@ -81,14 +81,7 @@ const PostDetails = () => {
 
               <div className="small-medium lg:base-medium py-5">
                 <p>{post.caption}</p>
-                <ul className="flex gap-1 mt-2">
-                  {/* {post.tags.map((tag: string) => (
-                            <li key={tag} className="text-light-3">
-                                #{tag}
-                            </li>
-                        ))} */}
-                  {post.tags}
-                </ul>
+                
               </div>
               <div className="w-full">
                 <PostStats post={post} userId={user.id} />

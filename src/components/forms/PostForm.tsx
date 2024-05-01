@@ -41,7 +41,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
       caption: post ? post?.caption : "",
       file: [],
       location: post ? post?.location : "",
-      tags: post ? post?.tags : "",
     },
   })
 
@@ -130,19 +129,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
               <FormLabel className="shad-form_label">Add Location</FormLabel>
               <FormControl>
                 <Input type="text" className="shad-input" {...field} />
-              </FormControl>
-              <FormMessage className="shad-form_message" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="shad-form_label">Add Tags</FormLabel>
-              <FormControl>
-                <Input type="text" className="shad-input" placeholder="#travel #food"  {...field} />
               </FormControl>
               <FormMessage className="shad-form_message" />
             </FormItem>

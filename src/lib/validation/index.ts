@@ -17,7 +17,6 @@ export const PostValidation = z.object({
   caption: z.string().min(5, { message: "Caption can't have less than 5 characters" }).max(2000, { message: "Caption can't have more than 2000 characters" }),
   file: z.custom<File[]>(),
   location: z.string().max(100, { message: "Location is too long" }).optional(),
-  tags: z.string().optional(),
 })
 
 export const UserValidation = z.object({

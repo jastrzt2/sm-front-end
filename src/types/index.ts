@@ -18,7 +18,6 @@ export type INavLink = {
     caption: string;
     file: File[];
     location?: string;
-    tags?: string;
   };
   
   export type IUpdatePost = {
@@ -27,7 +26,6 @@ export type INavLink = {
     imageId: string;
     file: File[];
     location?: string;
-    tags?: string;
     imageUrl: string;
   };
   
