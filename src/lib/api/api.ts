@@ -42,11 +42,12 @@ export async function updateUser(user: IUpdatedUser) {
       throw new Error('No user ID provided');
     }
     const formData = new FormData();
+    console.log(user)
     formData.append('name', user.name);
     if (user.bio) formData.append('bio', user.bio);
     if (user.city) formData.append('city', user.city);
     if (user.file) formData.append('file', user.file[0]); // Dodaj plik jeśli istnieje
-
+    console.log(formData)
     const response = await fetch(`${API_URL}/users/update/${user.id}`, {
       method: 'POST',
       headers: {

@@ -50,13 +50,6 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
   console.log("Comments:", fetchedComments);
   return (
     <div className="space-y-4 p-3" >
-      <h1 className='text-xl'>Comments:</h1>
-      {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
-      ))}
-
-
-
       <div className="pt-2">
         <textarea
           className="w-full p-2 border border-gray-300 rounded-md bg-dark-4"
@@ -71,6 +64,11 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
           Add a comment
         </button>
       </div>
+      <h1 className='text-xl'>Comments:</h1>
+      {comments.map((comment) => (
+        <Comment key={comment.id} comment={comment} />
+      ))}
+
     </div>
   );
 };
