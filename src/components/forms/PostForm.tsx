@@ -61,6 +61,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
       }
       else {
         toast({
+          className: "toast",
           title: "Post updated successfully",
           color: "success",
         });

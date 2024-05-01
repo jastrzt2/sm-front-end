@@ -81,6 +81,7 @@
       };
 
       const saveChanges = () => {
+        if (!comment.text) return;
         setIsEditing(false);
         comment.text = editedText;
         const updatedCommentData: NewComment = {
@@ -128,7 +129,7 @@
             ) : (
               <p className="comment-text" onDoubleClick={toggleEdit}>{comment.text}</p>
             )}
-            <div className="flex gap-2 mr-5 mt-0.5">
+            <div className="flex gap-2 mr-5 mt-2">
               <img
                 src={`${checkIsLiked(likes, currentUser.id) ?
                   "/assets/icons/liked.svg"
@@ -143,7 +144,7 @@
               <p className="small-medium lg:base-medium">{likes.length}</p>
             </div>
             {isEditing && (
-              <div className="flex flex-row gap-2">
+              <div className="mt-2 flex flex-row gap-2">
                 <button className="bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded" onClick={saveChanges}>
                   Save
                 </button>

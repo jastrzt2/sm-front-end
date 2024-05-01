@@ -405,6 +405,7 @@ export async function deletePost(postId: string) {
 }
 
 export async function addComment(comment: { postId: string; text: string; userId: string; }) {
+  console.log(comment);
   try {
     const response = await fetch(`${API_URL}/comments/create`, {
       method: 'POST',

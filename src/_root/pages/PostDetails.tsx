@@ -8,7 +8,7 @@ import { timeAgo } from '@/lib/utils';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {
-  
+
   const navigate = useNavigate();
   const { id } = useParams();
   console.log("Details of post:", id);
@@ -94,9 +94,9 @@ const PostDetails = () => {
                 <PostStats post={post} userId={user.id} />
               </div>
             </div>
-          </div>
-          <div className="post_details-card">
-            <CommentsSection postId={post.id} initialComments={post.comments} />
+            <div className="post_details-card mt-7 flew-col">
+              <CommentsSection postId={post.id} initialComments={post.comments} />
+            </div>
           </div>
         </div>
       )

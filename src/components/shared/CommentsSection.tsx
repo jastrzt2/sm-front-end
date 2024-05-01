@@ -1,6 +1,6 @@
 import { useUserContext } from '@/context/AuthContext';
 import { useAddComment, useGetComments } from '@/lib/react-query/queriesAndMutations';
-import { IComment } from '@/types';
+import { IComment, NewComment } from '@/types';
 import Comment from './Comment';
 import { useEffect, useState } from 'react';
 import Loader from './Loader';
@@ -24,7 +24,14 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
   }, [fetchedComments]);
 
   const handleAddComment = () => {
-    const newComment: IComment = {
+    
+    if (!newCommentText) return;
+    const newComment: NewComment = {
+      userId: user.id,
+      postId: postId,
+      text: newCommentText,
+    };
+    const newCommentLocal: IComment = {
       id: Date.now().toString(),
       userId: user.id,
       postId: postId,
@@ -32,17 +39,18 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
       text: newCommentText,
       likes: []
     };
-    setComments(prev => [...prev, newComment]);
+    setComments(prev => [...prev, newCommentLocal]);
     setNewCommentText('');
     addComment(newComment);
   };
 
   if (isLoading) return <Loader />;
-  if (isError) return <div>Błąd podczas ładowania komentarzy.</div>;
+  if (isError) return <div>Error while loading comments...</div>;
 
   console.log("Comments:", fetchedComments);
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-3" >
+      <h1 className='text-xl'>Comments:</h1>
       {comments.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
