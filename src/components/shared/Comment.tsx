@@ -4,6 +4,7 @@
     import { useEffect, useRef, useState } from "react";
     import Loader from "./Loader";
     import { checkIsLiked, timeAgo } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
 
 
 
@@ -20,6 +21,7 @@
       const [isModalOpen, setIsModalOpen] = useState(false);
       const [isEditing, setIsEditing] = useState(false);
       const [editedText, setEditedText] = useState("");
+      const { toast } = useToast();
       const toggleEdit = () => setIsEditing(!isEditing);
       const modalRef = useRef<HTMLDivElement>(null);
 
@@ -82,6 +84,13 @@
 
       const saveChanges = () => {
         if (!comment.text) return;
+        if( comment.text.length > 2000 ) {
+          toast({
+            title: "Comment must be less than 2000 characters",
+            duration: 5000,
+          });
+          return;
+        };
         setIsEditing(false);
         comment.text = editedText;
         const updatedCommentData: NewComment = {

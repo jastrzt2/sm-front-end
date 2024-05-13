@@ -31,11 +31,11 @@ const Profile = () => {
   const handleWatch = () => {
     watchUser(id || "");
     if (isWatching) {
-        setIsWatching(false);
+      setIsWatching(false);
     } else {
-        setIsWatching(true);
+      setIsWatching(true);
     }
-};
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-4">

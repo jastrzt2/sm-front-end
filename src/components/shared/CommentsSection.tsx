@@ -4,6 +4,7 @@ import { IComment, NewComment } from '@/types';
 import Comment from './Comment';
 import { useEffect, useState } from 'react';
 import Loader from './Loader';
+import { useToast } from '../ui/use-toast';
 
 interface CommentsSectionProps {
   postId: string;
@@ -16,6 +17,7 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
   const [newCommentText, setNewCommentText] = useState('');
   const { user } = useUserContext();
   const { mutate: addComment } = useAddComment();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (fetchedComments) {
@@ -24,7 +26,10 @@ const CommentsSection = ({ postId }: CommentsSectionProps) => {
   }, [fetchedComments]);
 
   const handleAddComment = () => {
-    
+    if (newCommentText.length > 2000 ){
+      toast({ title: 'Comment is too long. Please keep it under 2000 characters.' });
+      return;
+    }
     if (!newCommentText) return;
     const newComment: NewComment = {
       userId: user.id,

@@ -7,6 +7,7 @@ console.log('API URL:', API_URL);
 
 
 export async function getUserById(userId: String) {
+  console.log("siema " + userId);
   if (userId === '' || userId === null)
     throw new Error('No user ID provided')
   const response = await fetch(`${API_URL}/users/${userId}`);
@@ -524,6 +525,33 @@ export async function likeComment(commentId: string) {
 export async function getInfinitePosts({ pageParam }: { pageParam?: string }) {
   try {
     const url = new URL(`${API_URL}/posts/get`);
+    if (pageParam) {
+      url.searchParams.append('cursor', pageParam);
+    }
+    
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem("cookieFallback")}`
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const posts = await response.json(); 
+    console.log(posts); 
+    return posts; 
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    throw error; 
+  }
+}
+
+export async function getFollowedPosts({ pageParam }: { pageParam?: string }) {
+  try {
+    const url = new URL(`${API_URL}/posts/getWatched`);
     if (pageParam) {
       url.searchParams.append('cursor', pageParam);
     }

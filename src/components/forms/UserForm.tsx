@@ -59,6 +59,7 @@ const UserForm = () => {
   };
 
   return (
+    <div className="flex flex-1 justify-center">
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">
         <FormField
@@ -129,6 +130,7 @@ const UserForm = () => {
         </div>
       </form>
     </Form>
+    </div>
   );
 };
 

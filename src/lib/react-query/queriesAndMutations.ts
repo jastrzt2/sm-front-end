@@ -4,7 +4,7 @@ import {
     useMutation,
     useQueryClient,
     useInfiniteQuery} from '@tanstack/react-query'
-import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likeComment, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser, watchUser } from '../api/api'
+import { addComment, createPost, createUserAccount, deleteComment, deletePost, editComment, editPost, getComments, getFollowedPosts, getInfinitePosts, getPostById, getPostList, getRecentPosts, getSavedPosts, getUserById, likeComment, likePost, savePost, searchPosts, signInAccount, signOutAccount, updateUser, watchUser } from '../api/api'
 import { QUERY_KEYS } from './queryKeys'
 
 export const useCreateUserAccount = () => {
@@ -79,6 +79,21 @@ export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
         queryFn: getInfinitePosts,
+        getNextPageParam: (lastPage: any) => {
+            if (lastPage && lastPage.length === 0) {
+                return null;
+            }
+            const lastId = lastPage[lastPage.length - 1].id;
+            return lastId;
+        },
+        initialPageParam: 0,
+    });
+};
+
+export const useGetWatchedPosts = () => {
+    return useInfiniteQuery({
+        queryKey: [QUERY_KEYS.GET_FOLLOWED_POSTS],
+        queryFn: getFollowedPosts,
         getNextPageParam: (lastPage: any) => {
             if (lastPage && lastPage.length === 0) {
                 return null;
