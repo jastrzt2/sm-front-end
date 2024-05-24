@@ -67,6 +67,7 @@ const UserForm = () => {
           name="file"
           render={({ field }) => (
             <FormItem>
+              <FormLabel className="shad-form_label">Profile Picture</FormLabel>
               <FormControl>
                 <FileUploader
                   fieldChange={field.onChange}
