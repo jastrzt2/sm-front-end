@@ -37,7 +37,7 @@ const AllUsers = () => {
         {user.watched.length > 0 && (
           <div className="watched-users-container">
             <div className="horizontal-scroll">
-              {user.watched.map(userId => (
+              {user.watched.map((userId: string) => (
                 <WatchedUserCard key={userId} userId={userId} />
               ))}
             </div>
@@ -46,7 +46,7 @@ const AllUsers = () => {
         <div className="home-posts">
           {isPostLoading && !posts ? <Loader /> : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
-              {posts?.pages.map((page, index) => page.map(post => (
+              {posts?.pages.map((page: any[], index: number) => page.map((post: any) => (
                 <li key={`post-${index}-${post.id}`} className="flex justify-center w-full">
                   <PostCard post={post} />
                 </li>

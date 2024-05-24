@@ -6,7 +6,7 @@ interface WatchedUserCardProps {
 }
 
 const WatchedUserCard: React.FC<WatchedUserCardProps> = ({ userId }) => {
-  const { data: user, isLoading: isLoadingUser, isError: isUserError } = useGetUserById(userId);
+  const { data: user, isLoading: isLoadingUser } = useGetUserById(userId);
 
   if (isLoadingUser) {
     return <Loader />;
